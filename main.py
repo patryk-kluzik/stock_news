@@ -33,11 +33,17 @@ day_before_yesterday_close = float(data[day_before_yesterday_str]["4. close"])
 price_difference = round((yesterday_close - day_before_yesterday_close), 4)
 percentage_change = round(price_difference / day_before_yesterday_close * 100, 3)
 
-if -5 > percentage_change or percentage_change > 5:
+if -5 > percentage_change:
+    change_str = f"🔻{percentage_change}%"
+    print("Get News")
+elif percentage_change > 5:
+    change_str = f"🔺{percentage_change}%"
     print("Get News")
 elif percentage_change < 0:
+    change_str = f"🔺{percentage_change}%"
     print(f"Price only decreased by {percentage_change}%")
 else:
+    change_str = f"🔻{percentage_change}%"
     print(f"Price only increased by {percentage_change}%")
 
 ## STEP 2: Use https://newsapi.org
@@ -61,10 +67,9 @@ top_3_news = news_data["articles"][:3]
 top_3_news_formatted = []
 
 for news in top_3_news:
-    top_3_news_dict = {news["title"]: news["title"], news["description"]: news["description"]}
+    top_3_news_dict = {"title": news["title"], "description": news["description"]}
     top_3_news_formatted.append(top_3_news_dict)
 
-print(top_3_news_formatted)
 
 ## STEP 3: Use https://www.twilio.com
 # Send a seperate message with the percentage change and each article's title and description to your phone number. 
@@ -80,3 +85,11 @@ or
 Headline: Were Hedge Funds Right About Piling Into Tesla Inc. (TSLA)?. 
 Brief: We at Insider Monkey have gone over 821 13F filings that hedge funds and prominent investors are required to file by the SEC The 13F filings show the funds' and investors' portfolio positions as of March 31st, near the height of the coronavirus market crash.
 """
+
+change_str = NASDAQ + ": " + change_str + "\n"
+headline_str = "Headline: " + top_3_news_formatted[0]["title"] + "\n"
+brief_str = "Brief: " + top_3_news_formatted[0]["description"] + "\n"
+
+message = change_str + headline_str + brief_str
+
+print(message)
