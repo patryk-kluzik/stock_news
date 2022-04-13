@@ -14,7 +14,7 @@ params = {
     "function": 'TIME_SERIES_DAILY',
     "symbol": NASDAQ,
     "outputsize": "compact",
-    "apikey": "asdasdasd"#api_key_alphavantage
+    "apikey": "asdasdasd"  # api_key_alphavantage
 }
 
 response = requests.get(url=api_call_alphavantage, params=params)
@@ -27,14 +27,11 @@ yesterday_str = str(yesterday_dt).split(" ")[0]
 day_before_yesterday_dt = yesterday_dt - timedelta(days=1)
 day_before_yesterday_str = str(day_before_yesterday_dt).split(" ")[0]
 
-print(data[yesterday_str])
-print(data[day_before_yesterday_str])
-
 yesterday_close = float(data[yesterday_str]["4. close"])
 day_before_yesterday_close = float(data[day_before_yesterday_str]["4. close"])
 
 price_difference = round((yesterday_close - day_before_yesterday_close), 4)
-percentage_change = round(price_difference / day_before_yesterday_close * 100,3)
+percentage_change = round(price_difference / day_before_yesterday_close * 100, 3)
 
 if -5 > percentage_change or percentage_change > 5:
     print("Get News")
@@ -49,20 +46,31 @@ else:
 api_endpoint_newsapi = 'https://newsapi.org/v2/everything'
 api_key_newsapi = os.environ.get("API_KEY_NEWSAPI")
 params_news = {
-    "apiKey" : api_key_newsapi,
-    "q" : COMPANY_NAME
+    "apiKey": api_key_newsapi,
+    "from": yesterday_str,
+    "langauge": "en",
+    "sortBy": "popularity",
+    "q": COMPANY_NAME
 }
 
 response_news = requests.get(url=api_endpoint_newsapi, params=params_news)
 news_data = response_news.json()
 
-print(news_data)
+top_3_news = news_data["articles"][:3]
+
+top_3_news_formatted = []
+
+for news in top_3_news:
+    top_3_news_dict = {news["title"]: news["title"], news["description"]: news["description"]}
+    top_3_news_formatted.append(top_3_news_dict)
+
+print(top_3_news_formatted)
 
 ## STEP 3: Use https://www.twilio.com
 # Send a seperate message with the percentage change and each article's title and description to your phone number. 
 
 
-#Optional: Format the SMS message like this: 
+# Optional: Format the SMS message like this:
 """
 TSLA: 🔺2%
 Headline: Were Hedge Funds Right About Piling Into Tesla Inc. (TSLA)?. 
@@ -72,4 +80,3 @@ or
 Headline: Were Hedge Funds Right About Piling Into Tesla Inc. (TSLA)?. 
 Brief: We at Insider Monkey have gone over 821 13F filings that hedge funds and prominent investors are required to file by the SEC The 13F filings show the funds' and investors' portfolio positions as of March 31st, near the height of the coronavirus market crash.
 """
-
