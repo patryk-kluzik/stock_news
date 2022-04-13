@@ -44,7 +44,19 @@ else:
     print(f"Price only increased by {percentage_change}%")
 
 ## STEP 2: Use https://newsapi.org
-# Instead of printing ("Get News"), actually get the first 3 news pieces for the COMPANY_NAME. 
+# Instead of printing ("Get News"), actually get the first 3 news pieces for the COMPANY_NAME.
+
+api_endpoint_newsapi = 'https://newsapi.org/v2/everything'
+api_key_newsapi = os.environ.get("API_KEY_NEWSAPI")
+params_news = {
+    "apiKey" : api_key_newsapi,
+    "q" : COMPANY_NAME
+}
+
+response_news = requests.get(url=api_endpoint_newsapi, params=params_news)
+news_data = response_news.json()
+
+print(news_data)
 
 ## STEP 3: Use https://www.twilio.com
 # Send a seperate message with the percentage change and each article's title and description to your phone number. 
