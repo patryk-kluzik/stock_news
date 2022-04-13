@@ -1,4 +1,4 @@
-STOCK = "TSLA"
+NASDAQ = "TSLA"
 COMPANY_NAME = "Tesla Inc"
 
 ## STEP 1: Use https://www.alphavantage.co
@@ -8,14 +8,13 @@ from datetime import datetime, timedelta
 import os
 
 api_key_alphavantage = os.environ.get("API_KEY_ALPHAVANTAGE")
-
 api_call_alphavantage = 'https://www.alphavantage.co/query'
 
 params = {
     "function": 'TIME_SERIES_DAILY',
-    "symbol": STOCK,
+    "symbol": NASDAQ,
     "outputsize": "compact",
-    "apikey": api_key_alphavantage
+    "apikey": "asdasdasd"#api_key_alphavantage
 }
 
 response = requests.get(url=api_call_alphavantage, params=params)
@@ -30,6 +29,19 @@ day_before_yesterday_str = str(day_before_yesterday_dt).split(" ")[0]
 
 print(data[yesterday_str])
 print(data[day_before_yesterday_str])
+
+yesterday_close = float(data[yesterday_str]["4. close"])
+day_before_yesterday_close = float(data[day_before_yesterday_str]["4. close"])
+
+price_difference = round((yesterday_close - day_before_yesterday_close), 4)
+percentage_change = round(price_difference / day_before_yesterday_close * 100,3)
+
+if -5 > percentage_change or percentage_change > 5:
+    print("Get News")
+elif percentage_change < 0:
+    print(f"Price only decreased by {percentage_change}%")
+else:
+    print(f"Price only increased by {percentage_change}%")
 
 ## STEP 2: Use https://newsapi.org
 # Instead of printing ("Get News"), actually get the first 3 news pieces for the COMPANY_NAME. 
