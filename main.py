@@ -71,14 +71,10 @@ def get_news():
 
 
 def format_message(news_list: list) -> list:
-    news_as_list_formatted = []
-    for news_item in news_list:
-        percent_str = NASDAQ + ": " + change_str + "\n"
-        headline_str = "Headline: " + news_item["title"] + "\n"
-        brief_str = "Brief: " + news_item["description"] + "\n"
-        news_as_list_formatted.append(percent_str + headline_str + brief_str)
-
-    return news_as_list_formatted
+    return [f"{NASDAQ}: {change_str}\n "
+            f"Headline: {news_item['title']}\n "
+            f"Brief: {news_item['description']}"
+            for news_item in news_list]
 
 
 ## STEP 3: Use https://www.twilio.com
@@ -103,7 +99,7 @@ def send_sms(news_list: list):
 
 
 # if the price shifts by 5% or more, get news
-if -5 >= percentage_change or percentage_change >= 5:
+if -3 >= percentage_change or percentage_change >= 3:
     news = get_news()
     send_sms(news_list=news)
 
